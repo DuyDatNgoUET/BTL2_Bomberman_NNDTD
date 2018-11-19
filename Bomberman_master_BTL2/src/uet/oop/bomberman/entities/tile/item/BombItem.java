@@ -14,7 +14,6 @@ public class BombItem extends Item {
 	public boolean collide(Entity e) {
 		// TODO: xử lý Bomber ăn Item
 
-
 		return false;
 	}
 	

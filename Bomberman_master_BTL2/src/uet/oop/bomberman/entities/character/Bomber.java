@@ -82,7 +82,7 @@ public class Bomber extends Character {
             placeBomb(xt,yt);
             Game.addBombRate(-1);
 
-            _timeBetweenPutBombs = 30 ;
+            _timeBetweenPutBombs = 20 ;
 
         }
     }
@@ -128,15 +128,25 @@ public class Bomber extends Character {
         // TODO: nhớ cập nhật lại giá trị cờ _moving khi thay đổi trạng thái di chuyển
 
         int xa =0, ya =0;
-        if(_input.up) ya--;
-        if(_input.down) ya++;
-        if(_input.left) xa--;
-        if(_input.right) xa++;
-
-        if(xa !=0 || ya != 0){
-            move();
+        if(_input.up) {
+             ya--;
+             move(xa*Game.getBomberSpeed(),ya*Game.getBomberSpeed());
             _moving = true ;
-
+        }
+        else if(_input.down){
+            ya++;
+            move(xa*Game.getBomberSpeed(),ya*Game.getBomberSpeed());
+            _moving = true;
+        }
+        else if(_input.right){
+            xa++;
+            move(xa*Game.getBomberSpeed(),ya*Game.getBomberSpeed());
+            _moving= true;
+        }
+        else if(_input.left){
+            xa--;
+            move(xa*Game.getBomberSpeed(),ya*Game.getBomberSpeed());
+            _moving = true;
         }
         else{
             _moving = false ;
@@ -148,11 +158,15 @@ public class Bomber extends Character {
     @Override
     public boolean canMove(double x, double y) {
         // TODO: kiểm tra có đối tượng tại vị trí chuẩn bị di chuyển đến và có thể di chuyển tới đó hay không
-        for(int t=0;t<4;t++){
+        for (int t=0;t<4;t++){
+            double xt = ((_x + x) + t % 2 * 11) / Game.TILES_SIZE;
+            double yt = ((_y + y) + t % 2 * 12 - 13) / Game.TILES_SIZE;
+            Entity a = _board.getEntity(xt, yt, this);
 
+            if(!a.collide(this))
+                return false;
         }
-
-        return false;
+        return true;
     }
 
     @Override
@@ -167,6 +181,7 @@ public class Bomber extends Character {
             //separate the moves for the player can slide when is colliding
             // tách các di chuyển cho người chơi có thể trượt khi va chạm
             _y += ya;
+
         }
 
         if(canMove(xa, 0)) {
@@ -180,7 +195,6 @@ public class Bomber extends Character {
     public boolean collide(Entity e) {
         // TODO: xử lý va chạm với Flame
         // TODO: xử lý va chạm với Enemy
-
 
         return true;
     }
