@@ -161,7 +161,7 @@ public class Bomber extends Character {
         for (int t=0;t<4;t++){
             double xt = ((_x + x) + t % 2 * 11) / Game.TILES_SIZE;
             double yt = ((_y + y) + t % 2 * 12 - 13) / Game.TILES_SIZE;
-            Entity a = _board.getEntity(xt, yt, this);
+            Entity a = _board.getEntity(xt,yt);
 
             if(!a.collide(this))
                 return false;

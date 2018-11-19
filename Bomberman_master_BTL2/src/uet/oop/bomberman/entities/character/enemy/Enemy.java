@@ -156,7 +156,7 @@ public abstract class Enemy extends Character {
 		int xx = Coordinates.pixelToTile(xr) +(int)x;
 		int yy = Coordinates.pixelToTile(yr) +(int)y;
 
-		Entity a = _board.getEntity(xx, yy, this); //entity of the position we want to go
+		Entity a = _board.getEntity(xx, yy); //entity of the position we want to go
 
 		return a.collide(this);
 

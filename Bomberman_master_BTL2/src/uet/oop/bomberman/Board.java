@@ -140,7 +140,7 @@ public class  Board implements IRender {
 		}
 	}
 	
-	public Entity getEntity(double x, double y, Character m) {
+	public Entity getEntity(double x, double y) {
 		
 		Entity res = null;
 		
@@ -150,7 +150,7 @@ public class  Board implements IRender {
 		res = getBombAt(x, y);
 		if( res != null) return res;
 		
-		res = getCharacterAtExcluding((int)x, (int)y, m);
+		res = getCharacterAtExcluding((int)x, (int)y);
 		if( res != null) return res;
 		
 		res = getEntityAt((int)x, (int)y);
@@ -188,16 +188,12 @@ public class  Board implements IRender {
 		return null;
 	}
 	
-	public Character getCharacterAtExcluding(int x, int y, Character a) {
+	public Character getCharacterAtExcluding(int x, int y) {
 		Iterator<Character> itr = _characters.iterator();
 		
 		Character cur;
 		while(itr.hasNext()) {
 			cur = itr.next();
-			if(cur == a) {
-				continue;
-			}
-			
 			if(cur.getXTile() == x && cur.getYTile() == y) {
 				return cur;
 			}
