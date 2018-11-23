@@ -21,7 +21,8 @@ public class Bomber extends Character {
 
     /**
      * nếu giá trị _timeBetweenPutBombs này < 0 thì cho phép đặt đối tượng Bomb tiếp theo,
-     * cứ mỗi lần đặt 1 Bomb mới, giá trị này sẽ được reset về 0 và giảm dần trong mỗi lần update()
+     * cứ mỗi lần đặt 1 Bomb mới,
+     * giá trị này sẽ được reset về 0 và giảm dần trong mỗi lần update()
      */
     protected int _timeBetweenPutBombs = 0;
 
@@ -35,7 +36,7 @@ public class Bomber extends Character {
     @Override
     public void update() {
         clearBombs();
-        if (!_alive) {
+        if (!_alive == false) {
             afterKill();
             return;
         }
@@ -77,9 +78,10 @@ public class Bomber extends Character {
         // TODO: _timeBetweenPutBombs dùng để ngăn chặn Bomber đặt 2 Bomb cùng tại 1 vị trí trong 1 khoảng thời gian quá ngắn
         // TODO: nếu 3 điều kiện trên thỏa mãn thì thực hiện đặt bom bằng placeBomb()
         // TODO: sau khi đặt, nhớ giảm số lượng Bomb Rate và reset _timeBetweenPutBombs về 0
-        if(_input.space && Game.getBombRate()>0 &&  _timeBetweenPutBombs<0){
+        if(_input.space  && Game.getBombRate()>0 &&  _timeBetweenPutBombs<0){
             int xt = Coordinates.pixelToTile(_x + _sprite.getSize() / 2);
-            int yt = Coordinates.pixelToTile((_y + _sprite.getSize()/2) - _sprite.getSize());
+            int yt = Coordinates.pixelToTile((_y + _sprite.getSize()/2) -
+                    _sprite.getSize());
 
             placeBomb(xt,yt);
             Game.addBombRate(-1);
@@ -91,8 +93,7 @@ public class Bomber extends Character {
 
     protected void placeBomb(int x, int y) {
         // TODO: thực hiện tạo đối tượng bom, đặt vào vị trí (x, y)
-        Bomb b;
-        b = new Bomb(x,y,_board);
+        Bomb b = new Bomb(x,y,_board);
         _board.addBomb(b);
     }
 

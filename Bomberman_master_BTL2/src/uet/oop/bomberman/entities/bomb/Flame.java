@@ -2,6 +2,7 @@ package uet.oop.bomberman.entities.bomb;
 
 import uet.oop.bomberman.Board;
 import uet.oop.bomberman.entities.Entity;
+import uet.oop.bomberman.entities.character.Bomber;
 import uet.oop.bomberman.graphics.Screen;
 
 public class Flame extends Entity {
@@ -53,7 +54,7 @@ public class Flame extends Entity {
                 case 2: y++; break;
                 case 3: x--; break;
             }
-            _flameSegments[i] = new FlameSegment(x, y, _direction, last);
+            _flameSegments[i] = new FlameSegment(x, y, _direction, last,_board);
         }
 
         // TODO: tạo các segment dưới đây
@@ -75,6 +76,8 @@ public class Flame extends Entity {
             if (_direction == 2) y++;
             if (_direction == 3) x--;
             Entity a = _board.getEntity(x, y);
+
+
 
             if(a.collide(this)== false) break;
 

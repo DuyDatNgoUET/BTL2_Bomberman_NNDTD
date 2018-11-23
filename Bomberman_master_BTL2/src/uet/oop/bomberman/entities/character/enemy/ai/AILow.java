@@ -6,7 +6,7 @@ public class AILow extends AI {
 	public int calculateDirection() {
 		// TODO: cài đặt thuật toán tìm đường đi
 
-		return 1;
+		return random.nextInt(4);
 	}
 
 }

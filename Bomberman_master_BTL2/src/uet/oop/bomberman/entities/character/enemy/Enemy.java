@@ -46,7 +46,7 @@ public abstract class Enemy extends Character {
 	public void update() {
 		animate();
 		
-		if(!_alive) {
+		if(!_alive== false) {
 			afterKill();
 			return;
 		}
@@ -172,7 +172,7 @@ public abstract class Enemy extends Character {
 		}
 
 		if(e instanceof Bomber){
-			kill();
+			((Bomber)e).kill();
 			return false;
 		}
 		return true;
