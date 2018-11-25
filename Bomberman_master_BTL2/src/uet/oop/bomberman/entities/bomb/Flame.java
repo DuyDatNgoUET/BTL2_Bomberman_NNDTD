@@ -3,9 +3,13 @@ package uet.oop.bomberman.entities.bomb;
 import uet.oop.bomberman.Board;
 import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.character.Bomber;
+import uet.oop.bomberman.entities.character.enemy.Balloon;
+import uet.oop.bomberman.entities.character.enemy.Oneal;
 import uet.oop.bomberman.graphics.Screen;
 
 public class Flame extends Entity {
+
+    Bomb bomb;
 
     protected Board _board;
     protected int _direction;
@@ -108,7 +112,18 @@ public class Flame extends Entity {
 	public boolean collide(Entity e) {
 		// TODO: xử lý va chạm với Bomber, Enemy.
         // todo :  Chú ý đối tượng này có vị trí chính là vị trí của Bomb đã nổ
-
-		return true;
+        if(e instanceof Bomber){
+            ((Bomber)e).kill();
+            return false;
+        }
+        if(e instanceof Balloon){
+            ((Balloon)e).kill();
+            return  false;
+        }
+        if(e instanceof Oneal){
+            ((Oneal)e).kill();
+            return false;
+        }
+        return true ;
 	}
 }

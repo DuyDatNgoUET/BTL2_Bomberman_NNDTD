@@ -6,7 +6,8 @@ import uet.oop.bomberman.graphics.Sprite;
 
 public abstract class Item extends Tile {
 
-	protected int _duration = -1 ; // thời lượng
+	protected int _duration = -1 ; // thời lượng,
+	// -1  là vô hạn - thời gian vòng đời
 	protected boolean _active = false;  // hoạt động
 	protected  int _level; // level
 
@@ -15,7 +16,7 @@ public abstract class Item extends Tile {
 		_level = level;
 	}
 
-/*
+
 
 	public abstract void setValues();
 
@@ -25,7 +26,7 @@ public abstract class Item extends Tile {
 
 	public boolean isActive(){
 		return _active;
-	}*/
+	}
 
 
 }
