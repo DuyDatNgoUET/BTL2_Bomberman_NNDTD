@@ -29,12 +29,16 @@ public class Game extends Canvas {
 	
 	public static final int TIME = 200;
 	public static final int POINTS = 0;
+	public static final int LIVES = 5;
+
+
 	
 	protected static int SCREENDELAY = 3;
 
 	protected static int bombRate = BOMBRATE;
 	protected static int bombRadius = BOMBRADIUS;
 	protected static double bomberSpeed = BOMBERSPEED;
+	protected static int bomberLives =5;
 	
 	
 	protected int _screenDelay = SCREENDELAY;
@@ -144,6 +148,7 @@ public class Game extends Canvas {
 			if(System.currentTimeMillis() - timer > 1000) {
 				_frame.setTime(_board.subtractTime());
 				_frame.setPoints(_board.getPoints());
+				_frame.setLives(Game.getBomberLives());
 				timer += 1000;
 				_frame.setTitle(TITLE + " | " + updates + " rate, " + frames + " fps");
 				updates = 0;
@@ -154,7 +159,6 @@ public class Game extends Canvas {
 			}
 		}
 	}
-
 	
 	public static double getBomberSpeed() {
 		return bomberSpeed;
@@ -194,6 +198,18 @@ public class Game extends Canvas {
 	
 	public void pause() {
 		_paused = true;
+	}
+
+	public void run() {
+		_running = true;
+		_paused = false;
+	}
+
+	public static   void addBomberLives(int i){
+		bomberLives-=1;
+	}
+	public static int getBomberLives(){
+		return bomberLives;
 	}
 	
 }

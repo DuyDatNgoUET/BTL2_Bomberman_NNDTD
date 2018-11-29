@@ -14,6 +14,7 @@ public abstract class Tile extends Entity {
 		_x = x;
 		_y = y;
 		_sprite = sprite;
+
 	}
 
 	/**
@@ -28,10 +29,7 @@ public abstract class Tile extends Entity {
 	
 	@Override
 	public void render(Screen screen) {
-		screen.renderEntity(
-				Coordinates.tileToPixel(_x),
-				Coordinates.tileToPixel(_y),
-				this);
+		screen.renderEntity( Coordinates.tileToPixel(_x), Coordinates.tileToPixel(_y), this);
 	}
 	
 	@Override

@@ -1,5 +1,7 @@
 package uet.oop.bomberman.entities.character;
 
+
+import sound.GameSoundOne;
 import uet.oop.bomberman.Board;
 import uet.oop.bomberman.Game;
 import uet.oop.bomberman.entities.Entity;
@@ -18,16 +20,15 @@ import java.util.List;
 
 public class Bomber extends Character {
 
-    private List<Bomb> _bombs;
+    private static List<Bomb> _bombs;
     protected Keyboard _input;
+    public static List<Item> _items = new ArrayList<Item>();
 
     /**
-     * nếu giá trị _timeBetweenPutBombs này < 0 thì cho phép đặt đối tượng Bomb tiếp theo,
-     * cứ mỗi lần đặt 1 Bomb mới,
-     * giá trị này sẽ được reset về 0 và giảm dần trong mỗi lần update()
+     * nếu giá trị này < 0 thì cho phép đặt đối tượng Bomb tiếp theo,
+     * cứ mỗi lần đặt 1 Bomb mới, giá trị này sẽ được reset về 0 và giảm dần trong mỗi lần update()
      */
     protected int _timeBetweenPutBombs = 0;
-    public static List<Item> _items = new ArrayList<Item>();
 
     public Bomber(int x, int y, Board board) {
         super(x, y, board);
@@ -39,7 +40,7 @@ public class Bomber extends Character {
     @Override
     public void update() {
         clearBombs();
-        if (!_alive == false) {
+        if (!_alive) {
             afterKill();
             return;
         }
@@ -76,7 +77,6 @@ public class Bomber extends Character {
      */
     private void detectPlaceBomb() {
         // TODO: kiểm tra xem phím điều khiển đặt bom có được gõ và giá trị _timeBetweenPutBombs, Game.getBombRate() có thỏa mãn hay không
-
         // TODO:  Game.getBombRate() sẽ trả về số lượng bom có thể đặt liên tiếp tại thời điểm hiện tại
         // TODO: _timeBetweenPutBombs dùng để ngăn chặn Bomber đặt 2 Bomb cùng tại 1 vị trí trong 1 khoảng thời gian quá ngắn
         // TODO: nếu 3 điều kiện trên thỏa mãn thì thực hiện đặt bom bằng placeBomb()
@@ -85,7 +85,7 @@ public class Bomber extends Character {
             int xt = Coordinates.pixelToTile(_x + _sprite.getSize() / 2);
             int yt = Coordinates.pixelToTile((_y + _sprite.getSize()/2) -
                     _sprite.getSize());
-
+            GameSoundOne set_bomb = new GameSoundOne("newbomb.wav");
             placeBomb(xt,yt);
             Game.addBombRate(-1);
 
@@ -109,22 +109,32 @@ public class Bomber extends Character {
             if (b.isRemoved()) {
                 bs.remove();
                 Game.addBombRate(1);
-            }
-        }
 
+            }
+
+        }
     }
 
     @Override
     public void kill() {
         if (!_alive) return;
+        GameSoundOne bomberdie = new GameSoundOne("bomber_die.wav");
+        Game.addBomberLives(-1);
         _alive = false;
+
     }
 
     @Override
     protected void afterKill() {
         if (_timeAfter > 0) --_timeAfter;
         else {
-            _board.endGame();
+            if(_bombs.size()==0){
+                if(Game.getBomberLives()>0){
+                    _board.currentLevel();
+                }
+                else
+                    _board.endGame();
+            }
         }
     }
 
@@ -132,11 +142,10 @@ public class Bomber extends Character {
     protected void calculateMove() {
         // TODO: xử lý nhận tín hiệu điều khiển hướng đi từ _input và gọi move() để thực hiện di chuyển
         // TODO: nhớ cập nhật lại giá trị cờ _moving khi thay đổi trạng thái di chuyển
-
         int xa =0, ya =0;
         if(_input.up) {
-             ya--;
-             move(xa*Game.getBomberSpeed(),ya*Game.getBomberSpeed());
+            ya--;
+            move(xa*Game.getBomberSpeed(),ya*Game.getBomberSpeed());
             _moving = true ;
         }
         else if(_input.down){
@@ -158,12 +167,22 @@ public class Bomber extends Character {
             _moving = false ;
 
         }
+    }
 
+    public void addItem(Item i){
+        if(i.isRemoved()) return ;
+        _items.add(i);
+        i.setValues();
+    }
+
+    public static int getBombNumber(){
+        return (_bombs.size());
     }
 
     @Override
     public boolean canMove(double x, double y) {
         // TODO: kiểm tra có đối tượng tại vị trí chuẩn bị di chuyển đến và có thể di chuyển tới đó hay không
+
         for (int t=0;t<4;t++){
             double xt = ((_x + x) + t % 2 * 11) / Game.TILES_SIZE;
             double yt = ((_y + y) + t % 2 * 12 - 13) / Game.TILES_SIZE;
@@ -197,12 +216,6 @@ public class Bomber extends Character {
 
     }
 
-    public void addItem(Item i ){
-        if(i.isRemoved()) return ;
-        _items.add(i);
-        i.setValues();
-    }
-
     @Override
     public boolean collide(Entity e) {
         // TODO: xử lý va chạm với Flame
@@ -214,8 +227,9 @@ public class Bomber extends Character {
 
         if(e instanceof Enemy){
             kill();
-            return true ;
+            return false  ;
         }
+
         return true;
     }
 

@@ -1,32 +1,23 @@
 package uet.oop.bomberman.entities.tile.item;
 
-import uet.oop.bomberman.Board;
 import uet.oop.bomberman.entities.tile.Tile;
 import uet.oop.bomberman.graphics.Sprite;
 
 public abstract class Item extends Tile {
-
-	protected int _duration = -1 ; // thời lượng,
-	// -1  là vô hạn - thời gian vòng đời
-	protected boolean _active = false;  // hoạt động
-	protected  int _level; // level
-
-	public Item(int x, int y,int level, Sprite sprite) {
+	protected boolean active = false;
+	protected int level;
+	public Item(int x, int y,int _level, Sprite sprite) {
 		super(x, y, sprite);
-		_level = level;
+		level = _level;
 	}
-
-
 
 	public abstract void setValues();
 
 	public int getLevel(){
-		return _level;
+		return level;
 	}
 
 	public boolean isActive(){
-		return _active;
+		return active;
 	}
-
-
 }

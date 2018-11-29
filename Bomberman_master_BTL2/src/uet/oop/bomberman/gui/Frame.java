@@ -45,5 +45,30 @@ public class Frame extends JFrame {
 	public void setPoints(int points) {
 		_infopanel.setPoints(points);
 	}
-	
+
+	public void newGame() {
+		_game.getBoard().newGame();
+	}
+
+
+	public void pauseGame() {
+		_game.getBoard().gamePause();
+	}
+
+	public void resumeGame() {
+		_game.getBoard().gameResume();
+	}
+
+	public void setLives(int lives) {
+		_infopanel.setLives(lives);
+	}
+
+	/*public boolean validCode(String str) {
+		return _game.getBoard().getLevel().validCode(str) != -1;
+	}
+
+	public void changeLevelByCode(String str) {
+		_game.getBoard().changeLevelByCode(str);
+	}*/
+
 }

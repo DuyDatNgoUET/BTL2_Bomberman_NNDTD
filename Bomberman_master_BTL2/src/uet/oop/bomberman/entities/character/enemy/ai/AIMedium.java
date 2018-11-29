@@ -14,7 +14,7 @@ public class AIMedium extends AI {
 
 	@Override
 	public int calculateDirection() {
-
+		// TODO: cài đặt thuật toán tìm đường đi
 		// row : hàng ngang
 		// col : hàng dọc
 		// vertical : theo chiều dọc
@@ -61,4 +61,6 @@ public class AIMedium extends AI {
 			return 2;
 		return -1;
 	}
+
+
 }

@@ -8,10 +8,7 @@ import uet.oop.bomberman.exceptions.LoadLevelException;
  */
 public abstract class LevelLoader {
 
-	protected int _width, _height ;
-
-	// default values just for testing
-
+	protected int _width = 20, _height = 20; // default values just for testing
 	protected int _level;
 	protected Board _board;
 
@@ -20,9 +17,9 @@ public abstract class LevelLoader {
 		loadLevel(level);
 	}
 
-	public abstract void loadLevel(int level) throws LoadLevelException;
+	public abstract void loadLevel(int level)throws LoadLevelException;
 
-	public abstract void createEntities() throws LoadLevelException;
+	public abstract void createEntities();
 
 	public int getWidth() {
 		return _width;

@@ -1,5 +1,6 @@
 package uet.oop.bomberman.entities.character.enemy;
 
+import sound.GameSoundOne;
 import uet.oop.bomberman.Board;
 import uet.oop.bomberman.Game;
 import uet.oop.bomberman.entities.Entity;
@@ -46,7 +47,7 @@ public abstract class Enemy extends Character {
 	public void update() {
 		animate();
 		
-		if(!_alive== false) {
+		if(!_alive) {
 			afterKill();
 			return;
 		}
@@ -75,6 +76,10 @@ public abstract class Enemy extends Character {
 	
 	@Override
 	public void calculateMove() {
+		// TODO: Tính toán hướng đi và di chuyển Enemy theo _ai và cập nhật giá trị cho _direction
+		// TODO: sử dụng canMove() để kiểm tra xem có thể di chuyển tới điểm đã tính toán hay không
+		// TODO: sử dụng move() để di chuyển
+		// TODO: nhớ cập nhật lại giá trị cờ _moving khi thay đổi trạng thái di chuyển
 		// TODO: Tính toán hướng đi và di chuyển Enemy theo _ai và cập nhật giá trị cho _direction
 		// TODO: sử dụng canMove() để kiểm tra xem có thể di chuyển tới điểm đã tính toán hay không
 		// TODO: sử dụng move() để di chuyển
@@ -134,7 +139,6 @@ public abstract class Enemy extends Character {
 				_moving = false;
 			}
 		}
-
 	}
 	
 	@Override
@@ -152,13 +156,14 @@ public abstract class Enemy extends Character {
 		if(_direction == 1) {yr += _sprite.getSize()/2; xr += 1;}
 		if(_direction == 2) { xr += _sprite.getSize()/2; yr += 1;}
 		if(_direction == 3) { xr += _sprite.getSize() -1; yr += _sprite.getSize()/2;}
-
+		//TODO :  kiểm tra điểm đến có bị chặn bởi brick hay wall hay không
 		int xx = Coordinates.pixelToTile(xr) +(int)x;
 		int yy = Coordinates.pixelToTile(yr) +(int)y;
 
-		Entity a = _board.getEntity(xx, yy); //entity of the position we want to go
+		Entity a = _board.getEntity(xx, yy);
 
 		return a.collide(this);
+
 
 	}
 
@@ -166,6 +171,7 @@ public abstract class Enemy extends Character {
 	public boolean collide(Entity e) {
 		// TODO: xử lý va chạm với Flame
 		// TODO: xử lý va chạm với Bomber
+
 		if(e instanceof Flame){
 			kill();
 			return false;
@@ -187,6 +193,7 @@ public abstract class Enemy extends Character {
 
 		Message msg = new Message("+" + _points, getXMessage(), getYMessage(), 2, Color.white, 14);
 		_board.addMessage(msg);
+		GameSoundOne enemydie = new GameSoundOne("monster_die.wav");
 	}
 	
 	

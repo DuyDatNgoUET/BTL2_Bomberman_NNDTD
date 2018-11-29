@@ -5,6 +5,7 @@ import uet.oop.bomberman.Game;
 import uet.oop.bomberman.entities.LayeredEntity;
 import uet.oop.bomberman.entities.character.Bomber;
 import uet.oop.bomberman.entities.character.enemy.Balloon;
+import uet.oop.bomberman.entities.character.enemy.Kondoria;
 import uet.oop.bomberman.entities.character.enemy.Oneal;
 import uet.oop.bomberman.entities.tile.Grass;
 import uet.oop.bomberman.entities.tile.Portal;
@@ -21,8 +22,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class FileLevelLoader extends LevelLoader {
 
@@ -31,52 +30,51 @@ public class FileLevelLoader extends LevelLoader {
 	 * từ ma trận bản đồ trong tệp cấu hình
 	 */
 	private static char[][] _map;
-	
+
 	public FileLevelLoader(Board board, int level) throws LoadLevelException {
 		super(board, level);
 	}
-	
+
 	@Override
 	public void loadLevel(int level) throws LoadLevelException {
 		// TODO: đọc dữ liệu từ tệp cấu hình /levels/Level{level}.txt
 		// TODO: cập nhật các giá trị đọc được vào _width, _height, _level, _map
-        BufferedReader br = null;
-        try {
-            String s = FileLevelLoader.class.getClassLoader().getResource("").toString();
-            s = s.substring(5);
-            s = s.replace("/", "\\");
-            File levelFile = new File(s + "levels\\Level" + level + ".txt");
-            br = new BufferedReader(new FileReader(levelFile));
+		BufferedReader br = null;
+		try {
+			String s = FileLevelLoader.class.getClassLoader().getResource("").toString();
+			s = s.substring(5);
+			s = s.replace("/", "\\");
+			File levelFile = new File(s + "levels\\Level" + level + ".txt");
+			br = new BufferedReader(new FileReader(levelFile));
 
-            String _Data = br.readLine();
-            String[] temp;
-            temp = _Data.split("\\s", 3);
+			String _Data = br.readLine();
+			String[] temp;
+			temp = _Data.split("\\s", 3);
 
-            _level = Integer.parseInt(temp[0]);
-            _height = Integer.parseInt(temp[1]);
-            _width = Integer.parseInt(temp[2]);
+			_level = Integer.parseInt(temp[0]);
+			_height = Integer.parseInt(temp[1]);
+			_width = Integer.parseInt(temp[2]);
 
-            _map = new char[_height][_width];
-            for (int i = 0; i < _height; i++) {
-                String line = br.readLine();
-                for (int j = 0; j < _width; j++) {
-                    _map[i][j] = line.charAt(j); // trả về kí tự charAt
-                }
-            }
-        } catch (IOException ex) {
-            throw new LoadLevelException();
-        } finally {
-            try {
-                br.close();
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-        }
-    }
-
+			_map = new char[_height][_width];
+			for (int i = 0; i < _height; i++) {
+				String line = br.readLine();
+				for (int j = 0; j < _width; j++) {
+					_map[i][j] = line.charAt(j);  // trả về kí tự charAt
+				}
+			}
+		} catch (IOException ex) {
+			throw new LoadLevelException();
+		} finally {
+			try {
+				br.close();
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+		}
+	}
 
 	@Override
-	public void createEntities() throws LoadLevelException {
+	public void createEntities() {
 		// TODO: tạo các Entity của màn chơi
 		// TODO: sau khi tạo xong, gọi _board.addEntity() để thêm Entity vào game
 
@@ -99,8 +97,7 @@ public class FileLevelLoader extends LevelLoader {
 
 		// thêm Enemy
 		int xE = 2, yE = 1;
-		_board.addCharacter( new Balloon(Coordinates.tileToPixel(xE),
-		Coordinates.tileToPixel(yE) + Game.TILES_SIZE, _board));
+		_board.addCharacter( new Balloon(Coordinates.tileToPixel(xE), Coordinates.tileToPixel(yE) + Game.TILES_SIZE, _board));
 		_board.addEntity(xE + yE * _width, new Grass(xE, yE, Sprite.grass));
 
 		// thêm Brick
@@ -122,79 +119,82 @@ public class FileLevelLoader extends LevelLoader {
 				)
 		);*/
 
-		for(int y=0; y< _height;y++){
-			for(int x=0;x<_width;x++){
-				switch(_map[y][x]){
-					case'#':{ // wall
-						_board.addEntity(x+y*_width, new Wall(x,y,Sprite.wall));
+		for (int y = 0; y < _height; y++) {
+			for (int x = 0; x < _width; x++) {
+				switch (_map[y][x]) {
+					case '#': // Wall
+					{
+						_board.addEntity(x + y * _width, new Wall(x, y, Sprite.wall));
 						break;
 					}
-					case'p':{ // bomber
+					case '*': // Brick
+					{
+						_board.addEntity(x + y * _width,
+								new LayeredEntity(x, y, new Grass(x, y, Sprite.grass), new Brick(x, y, Sprite.brick)));
+						break;
+					}
+					case 'x': // Portal
+					{
+						_board.addEntity(x + y * _width, new LayeredEntity(x, y, new Grass(x, y, Sprite.grass),
+								new Portal(x, y, Sprite.portal, _board), new Brick(x, y, Sprite.brick)));
+						break;
+					}
+					case 'p': // Bomber
+					{
 						_board.addCharacter(new Bomber(Coordinates.tileToPixel(x),
 								Coordinates.tileToPixel(y) + Game.TILES_SIZE, _board));
-						Screen.setOffset(0,0);
-						_board.addEntity(x+y*_width, new Grass(x,y,Sprite.grass));
+						Screen.setOffset(0, 0);
+						_board.addEntity(x + y * _width, new Grass(x, y, Sprite.grass));
 						break;
 					}
-                    case '*':{ // brick
-                        _board.addEntity(x + y * _width,
-                                new LayeredEntity(x, y,
-                                        new Grass(x ,y, Sprite.grass),
-                                        new SpeedItem(x, y,_level, Sprite.powerup_flames, _board),
-                                        new Brick(x, y, Sprite.brick)
-                                )
-                        );
-                        break;
-                    }
-                    case '1':{ // balloon
-                        _board.addCharacter(new Balloon(Coordinates.tileToPixel(x),
-                                Coordinates.tileToPixel(y) + Game.TILES_SIZE, _board));
-                        _board.addEntity(x + y * _width, new Grass(x, y, Sprite.grass));
-                        break;
-                    }
-                    case '2': { // oneal
-                        _board.addCharacter(new Oneal(Coordinates.tileToPixel(x),
-                                Coordinates.tileToPixel(y) + Game.TILES_SIZE, _board));
-                        _board.addEntity(x + y * _width, new Grass(x, y, Sprite.grass));
-                        break;
-                    }
-                    case 'x':{ // portal
-                        _board.addEntity(x + y * _width, new LayeredEntity(x, y, new Grass(x, y, Sprite.grass),
-                                new Portal(x, y, Sprite.portal, _board), new Brick(x, y, Sprite.brick)));
-                        break;
-                    }
-                    case 'b': // Bomb item
-                    {
-                        _board.addEntity(x + y * _width, new LayeredEntity(x, y, new Grass(x, y, Sprite.grass),
-                                new BombItem(x, y,_level, Sprite.powerup_bombs), new Brick(x, y, Sprite.brick)));
-                        break;
-                    }
-                    case 'f': // Flame item
-                    {
-                        _board.addEntity(x + y * _width,
-                                new LayeredEntity(x, y,
-                                        new Grass(x, y, Sprite.grass),
-                                new FlameItem(x, y,_level, Sprite.powerup_flames, _board),
-                                new Brick(x, y, Sprite.brick)));
-                        break;
-                    }
-                    case 's': // Speed item
-                    {
-                        _board.addEntity(x + y * _width, new LayeredEntity(x, y, new Grass(x, y, Sprite.grass),
-                                new SpeedItem(x, y,_level, Sprite.powerup_speed, _board), new Brick(x, y, Sprite.brick)));
-                        break;
-                    }
-                    default: // Grass
-                    {
-                        _board.addEntity(x + y * _width, new Grass(x, y, Sprite.grass));
-                    }
-
-
+					case '1': // Balloon
+					{
+						_board.addCharacter(new Balloon(Coordinates.tileToPixel(x),
+								Coordinates.tileToPixel(y) + Game.TILES_SIZE, _board));
+						_board.addEntity(x + y * _width, new Grass(x, y, Sprite.grass));
+						break;
+					}
+					case '2': // Oneal
+					{
+						_board.addCharacter(new Oneal(Coordinates.tileToPixel(x),
+								Coordinates.tileToPixel(y) + Game.TILES_SIZE, _board));
+						_board.addEntity(x + y * _width, new Grass(x, y, Sprite.grass));
+						break;
+					}
+					case '3': // kondoria
+					{
+						_board.addCharacter(new Kondoria(Coordinates.tileToPixel(x),
+								Coordinates.tileToPixel(y) + Game.TILES_SIZE, _board));
+						_board.addEntity(x + y * _width, new Grass(x, y, Sprite.grass));
+						break;
+					}
+					case 'b': // Bomb item
+					{
+						_board.addEntity(x + y * _width, new LayeredEntity(x, y, new Grass(x, y, Sprite.grass),
+								new BombItem(x, y, _level, Sprite.powerup_bombs), new Brick(x, y, Sprite.brick)));
+						break;
+					}
+					case 'f':{
+						_board.addEntity(x + y * _width, new LayeredEntity(x,y,
+								new Grass(x,y,Sprite.grass),
+								new FlameItem(x,y,_level,Sprite.powerup_flames,_board),
+								new Brick(x,y,Sprite.brick)
+						));
+						break;
+					}
+					case 's': // Speed item
+					{
+						_board.addEntity(x + y * _width, new LayeredEntity(x, y, new Grass(x, y, Sprite.grass),
+								new SpeedItem(x, y, _level, Sprite.powerup_speed, _board), new Brick(x, y, Sprite.brick)));
+						break;
+					}
+					default: // Grass
+					{
+						_board.addEntity(x + y * _width, new Grass(x, y, Sprite.grass));
+					}
 				}
 			}
 		}
 
 	}
-
-
 }

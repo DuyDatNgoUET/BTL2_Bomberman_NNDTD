@@ -1,5 +1,6 @@
 package uet.oop.bomberman.entities.bomb;
 
+import sound.GameSoundOne;
 import uet.oop.bomberman.Board;
 import uet.oop.bomberman.Game;
 import uet.oop.bomberman.entities.AnimatedEntitiy;
@@ -33,7 +34,7 @@ public class Bomb extends AnimatedEntitiy {
 			_timeToExplode--;
 		else {
 			if(!_exploded) 
-				explode();
+				explode(); // sự nổ
 			else
 				updateFlames();
 			
@@ -68,7 +69,7 @@ public class Bomb extends AnimatedEntitiy {
 	
 	public void updateFlames() {
 		for (int i = 0; i < _flames.length; i++) {
-			_flames[i].update(); // lửa
+			_flames[i].update();
 		}
 	}
 
@@ -79,7 +80,9 @@ public class Bomb extends AnimatedEntitiy {
 		_exploded = true;
 		
 		// TODO: xử lý khi Character đứng tại vị trí Bomb
-		Character c = _board.getCharacterAtExcluding(_x,_y);
+		
+		// TODO: tạo các Flame
+		Character c = _board.getCharacterAtExcluding((int)_x,(int)_y);
 		if(c!= null){
 			c.kill();
 		}
@@ -89,11 +92,11 @@ public class Bomb extends AnimatedEntitiy {
 			_flames[i] = new Flame((int)_x,(int)_y,i, Game.getBombRadius(), _board);
 
 		}
+		GameSoundOne bombang = new GameSoundOne("bomb_bang.wav");
 
-		// TODO: tạo các Flame
 	}
 	
-	public FlameSegment flameAt(int x, int y) { // flame segment - phân đoạn
+	public FlameSegment flameAt(int x, int y) {
 		if(!_exploded) return null;
 		
 		for (int i = 0; i < _flames.length; i++) {
@@ -107,8 +110,8 @@ public class Bomb extends AnimatedEntitiy {
 
 	@Override
 	public boolean collide(Entity e) {
-		// TODO: xử lý khi Bomber đi ra sau khi vừa đặt bom (_allowedToPassThru)
-		// TODO: xử lý va chạm với Flame của Bomb khác
+        // TODO: xử lý khi Bomber đi ra sau khi vừa đặt bom (_allowedToPassThru)
+        // TODO: xử lý va chạm với Flame của Bomb khác
 		if (e instanceof Bomber) {
 			double X = e.getX() - Coordinates.tileToPixel(getX());
 			double Y = e.getY() - Coordinates.tileToPixel(getY());
@@ -119,10 +122,11 @@ public class Bomb extends AnimatedEntitiy {
 		}
 
 		if (e instanceof Flame) {
-			explode();
+			_timeToExplode=0; // xử lí khi 2 bomb đặt cạnh nhau
+
 			return true;
 		}
 
-			return false;
-		}
+		return false;
 	}
+}

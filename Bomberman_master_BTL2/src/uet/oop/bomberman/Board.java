@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * Quản lý thao tác điều khiển, load level, render các màn hình của game
  */
-public class  Board implements IRender {
+public class Board implements IRender {
 	protected LevelLoader _levelLoader;
 	protected Game _game;
 	protected Keyboard _input;
@@ -36,6 +36,7 @@ public class  Board implements IRender {
 	
 	private int _time = Game.TIME;
 	private int _points = Game.POINTS;
+	private int _lives = Game.LIVES;
 	
 	public Board(Game game, Keyboard input, Screen screen) {
 		_game = game;
@@ -81,11 +82,39 @@ public class  Board implements IRender {
 		renderCharacter(screen);
 		
 	}
+
+	/**
+	 * changeLevel
+	 */
+	public void newGame() {
+		resetProperties();
+		loadLevel(1);
+	}
+
+	@SuppressWarnings("static-access")
+	private void resetProperties() {
+		_points = Game.POINTS;
+		_lives = Game.LIVES;
+		Bomber._items.clear();
+
+		_game.bomberSpeed = 1.0;
+		_game.bombRadius = 1;
+		_game.bombRate = 1;
+
+	}
+
+	public void restartLevel() {
+		loadLevel(_levelLoader.getLevel());
+	}
 	
 	public void nextLevel() {
 		loadLevel(_levelLoader.getLevel() + 1);
 	}
-	
+
+	public void currentLevel(){
+		loadLevel(_levelLoader.getLevel());
+	}
+
 	public void loadLevel(int level) {
 		_time = Game.TIME;
 		_screenToShow = 2;
@@ -125,6 +154,25 @@ public class  Board implements IRender {
 		
 		return total == 0;
 	}
+
+	/**
+	 * game pause and resume
+	 * @param g
+	 *
+	 */
+	public void gamePause() {
+		_game.resetScreenDelay();
+		if(_screenToShow <= 0)
+			_screenToShow = 3;
+		_game.pause();
+	}
+
+	public void gameResume() {
+		_game.resetScreenDelay();
+		_screenToShow = -1;
+		_game.run();
+	}
+
 	
 	public void drawScreen(Graphics g) {
 		switch (_screenToShow) {
@@ -174,6 +222,20 @@ public class  Board implements IRender {
 		return null;
 	}
 
+	public Character getMobAt(double x, double y) {
+		Iterator<Character> itr = _characters.iterator();
+
+		Character cur;
+		while(itr.hasNext()) {
+			cur = itr.next();
+
+			if(cur.getXTile() == x && cur.getYTile() == y)
+				return cur;
+		}
+
+		return null;
+	}
+
 	public Bomber getBomber() {
 		Iterator<Character> itr = _characters.iterator();
 		
@@ -188,12 +250,14 @@ public class  Board implements IRender {
 		return null;
 	}
 	
-	public Character getCharacterAtExcluding(double x, double y) {
+	public Character getCharacterAtExcluding(int x, int y) {
 		Iterator<Character> itr = _characters.iterator();
 		
 		Character cur;
 		while(itr.hasNext()) {
 			cur = itr.next();
+
+			
 			if(cur.getXTile() == x && cur.getYTile() == y) {
 				return cur;
 			}
@@ -262,7 +326,10 @@ public class  Board implements IRender {
 			g.drawString(m.getMessage(), (int)m.getX() - Screen.xOffset  * Game.SCALE, (int)m.getY());
 		}
 	}
-	
+
+	/**
+	 *
+	 */
 	protected void updateEntities() {
 		if( _game.isPaused() ) return;
 		for (int i = 0; i < _entities.length; i++) {
@@ -347,5 +414,13 @@ public class  Board implements IRender {
 	public int getHeight() {
 		return _levelLoader.getHeight();
 	}
-	
+
+
+	public int getLives() {
+		return _lives;
+	}
+
+	public void addLives(int lives) {
+		this._lives += lives;
+	}
 }
